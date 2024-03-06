@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.pokemonapp.models.PokemonType
 import com.example.pokemonapp.ui.theme.PokemonAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -53,6 +56,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun HomePage() {
+        val pokemon by mainViewModel.pokemonStateFlow.collectAsState()
 
         var text by remember { mutableStateOf("") }
         var flag by remember { mutableStateOf(false) }
@@ -67,11 +71,12 @@ class MainActivity : ComponentActivity() {
                     .align(Alignment.CenterHorizontally)
                     .padding(40.dp)
             )
-            Row {
+            Row (verticalAlignment = Alignment.CenterVertically) {
                 TextField(
                     value = text,
                     onValueChange = { text = it },
-                    label = { Text("Find Pokemon") }
+                    label = { Text("Find Pokemon") },
+                    modifier = Modifier.padding(25.dp)
                 )
                 Button(
                     onClick = {
@@ -86,26 +91,37 @@ class MainActivity : ComponentActivity() {
                 }
             }
             if(flag){
-                DisplayPokemon()
+                LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(5.dp))
+                 {
+                    item{
+                        // val imageUrl = pokemon?.sprite?.pokeSprite
+                        AsyncImage(
+                            model = pokemon?.sprites?.pokeSprite,
+                            contentDescription = "Searched Pokemon",
+                            modifier = Modifier.size(220.dp)
+                        )}
+                    item{
+                        Text(
+                            text = pokemon?.name.toString(),
+                            fontSize = 30.sp
+                        )}
+                     item{
+                         Text(
+                             text = "Weight: ${pokemon?.weight.toString()}",
+                             fontSize = 15.sp
+                         )}
+                     item{
+                         Text(
+                             text = "Height: ${pokemon?.height.toString()}",
+                             fontSize = 15.sp
+                         )}
+                     item{
+                         Text(
+                             text = "Types: ${pokemon?.types?.joinToString(separator = " - ") { it.type.name }}",
+                             fontSize = 15.sp
+                         )}
+                }
             }
-        }
-    }
-
-    @Composable
-    fun DisplayPokemon() {
-        val pokemon by mainViewModel.pokemonStateFlow.collectAsState()
-
-        Column {
-            val imageUrl = pokemon?.sprite.toString()
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = "Searched Pokemon",
-                modifier = Modifier.size(40.dp)
-            )
-            Text(
-                text = pokemon?.name.toString(),
-                fontSize = 30.sp
-            )
         }
     }
 }

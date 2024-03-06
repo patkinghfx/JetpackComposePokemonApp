@@ -8,14 +8,15 @@ data class Pokemon(
     val weight: Int,
     val height: Int,
     val types: List<PokemonType>,
-    val sprite: PokemonSprite
+    val sprites: PokemonSprite
 )
 
 data class PokemonType(
-    val slot: Int,
+    val type: TypeName
+)
+data class TypeName(
     val name: String
 )
-
 data class PokemonSprite(
     @SerializedName("front_default") val pokeSprite: String
 )

@@ -13,7 +13,7 @@ object APIClient {
             .build()
     }
 
-    val APIService: APIService by lazy {
+    val APIService by lazy {
         retrofit.create(APIService::class.java)
     }
 }
