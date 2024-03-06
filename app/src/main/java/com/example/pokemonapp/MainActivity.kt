@@ -27,7 +27,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,12 +56,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     fun HomePage() {
         val pokemon by mainViewModel.pokemonStateFlow.collectAsState()
 
         var text by remember { mutableStateOf("") }
         var flag by remember { mutableStateOf(false) }
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         Column {
             Spacer(modifier = Modifier.height(20.dp))
@@ -82,6 +86,7 @@ class MainActivity : ComponentActivity() {
                     onClick = {
                         flag = true
                         mainViewModel.getPokemon(text)
+                        keyboardController?.hide()
                     },
                     modifier = Modifier
                         .padding(5.dp),
